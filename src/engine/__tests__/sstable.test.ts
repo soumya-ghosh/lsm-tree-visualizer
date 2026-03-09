@@ -5,7 +5,7 @@ import {
   hasOverlap,
   resetSSTCounter,
 } from '../sstable';
-import type { KeyValue, SSTableMeta } from '../types';
+import type { KeyValue } from '../types';
 
 function kv(key: string, value: string, timestamp: number, deleted = false): KeyValue {
   return { key, value, timestamp, deleted };
