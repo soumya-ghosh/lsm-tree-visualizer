@@ -27,6 +27,7 @@ interface LSMStore {
   highlightedPath: string[];
   started: boolean;
   selectedSST: string | null;
+  foundSSTId: string | null;
   searchAnimation: SearchAnimation | null;
 
   start: (withData: boolean, config?: Partial<LSMConfig>) => void;
@@ -67,6 +68,7 @@ export const useLSMStore = create<LSMStore>((set, get) => ({
   highlightedPath: [],
   started: false,
   selectedSST: null,
+  foundSSTId: null,
   searchAnimation: null,
 
   start: (withData, config) => {
@@ -81,6 +83,7 @@ export const useLSMStore = create<LSMStore>((set, get) => ({
       snapshot: refreshSnapshot(tree),
       events: [],
       lastGetResult: null,
+      foundSSTId: null,
       highlightedPath: [],
       started: true,
     });
@@ -93,6 +96,7 @@ export const useLSMStore = create<LSMStore>((set, get) => ({
       snapshot: refreshSnapshot(tree),
       events: [...get().events, ...newEvents].slice(-50),
       lastGetResult: null,
+      foundSSTId: null,
       highlightedPath: [],
     });
   },
@@ -122,6 +126,7 @@ export const useLSMStore = create<LSMStore>((set, get) => ({
         highlightedPath: result.path,
         searchAnimation: null,
         selectedSST: null,
+        foundSSTId,
       });
     } else {
       set({
@@ -129,6 +134,7 @@ export const useLSMStore = create<LSMStore>((set, get) => ({
         events: [...get().events, ...result.events].slice(-50),
         lastGetResult: getResult,
         highlightedPath: [result.path[0]],
+        foundSSTId,
         searchAnimation: {
           active: true,
           steps: result.path,
@@ -150,6 +156,7 @@ export const useLSMStore = create<LSMStore>((set, get) => ({
       snapshot: refreshSnapshot(tree),
       events: [...get().events, ...newEvents].slice(-50),
       lastGetResult: null,
+      foundSSTId: null,
       highlightedPath: [],
     });
   },
@@ -165,6 +172,7 @@ export const useLSMStore = create<LSMStore>((set, get) => ({
       snapshot: refreshSnapshot(tree),
       events: [...get().events, ...allEvents].slice(-50),
       lastGetResult: null,
+      foundSSTId: null,
       highlightedPath: [],
     });
   },
@@ -191,13 +199,14 @@ export const useLSMStore = create<LSMStore>((set, get) => ({
       snapshot: refreshSnapshot(tree),
       events: [],
       lastGetResult: null,
+      foundSSTId: null,
       highlightedPath: [],
       started: false,
     });
   },
 
   clearHighlight: () => {
-    set({ highlightedPath: [], lastGetResult: null, searchAnimation: null, selectedSST: null });
+    set({ highlightedPath: [], lastGetResult: null, foundSSTId: null, searchAnimation: null, selectedSST: null });
   },
 
   setSelectedSST: (id) => {

@@ -26,6 +26,7 @@ export function SSTDetailDialog() {
   const snapshot = useLSMStore((s) => s.snapshot);
   const setSelectedSST = useLSMStore((s) => s.setSelectedSST);
   const lastGetResult = useLSMStore((s) => s.lastGetResult);
+  const foundSSTId = useLSMStore((s) => s.foundSSTId);
   const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -49,7 +50,7 @@ export function SSTDetailDialog() {
     }
   }
 
-  const foundKey = lastGetResult?.found ? lastGetResult.key : null;
+  const foundKey = lastGetResult?.found && selectedSST === foundSSTId ? lastGetResult.key : null;
 
   return (
     <AnimatePresence>
