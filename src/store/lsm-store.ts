@@ -46,16 +46,13 @@ function refreshSnapshot(tree: LSMTree): LSMSnapshot {
   return tree.getSnapshot();
 }
 
-const SAMPLE_KEYS = [
-  'user:001', 'user:002', 'user:003', 'user:004', 'user:005',
-  'order:100', 'order:101', 'order:102', 'order:103',
-  'product:a', 'product:b', 'product:c', 'product:d',
-  'session:x1', 'session:x2', 'session:x3',
-  'config:theme', 'config:lang', 'config:tz',
-  'log:001', 'log:002', 'log:003', 'log:004', 'log:005',
-  'cache:home', 'cache:dashboard', 'cache:profile',
-  'metric:cpu', 'metric:mem', 'metric:disk',
-];
+const KEY_PREFIXES = ['user', 'order', 'product', 'session', 'config', 'log', 'cache', 'metric', 'tx', 'event'];
+
+function randomKey(): string {
+  const prefix = KEY_PREFIXES[Math.floor(Math.random() * KEY_PREFIXES.length)];
+  const id = Math.floor(Math.random() * 1_000_000) + 1;
+  return `${id}:${prefix}`;
+}
 
 function randomValue(): string {
   const vals = ['alpha', 'beta', 'gamma', 'delta', 'epsilon', 'zeta', 'eta', 'theta'];
@@ -75,9 +72,8 @@ export const useLSMStore = create<LSMStore>((set, get) => ({
   start: (withData, config) => {
     const tree = new LSMTree(config);
     if (withData) {
-      const keys = SAMPLE_KEYS.slice(0, 30);
-      for (const key of keys) {
-        tree.put(key, randomValue());
+      for (let i = 0; i < 30; i++) {
+        tree.put(randomKey(), randomValue());
       }
     }
     set({
@@ -162,7 +158,7 @@ export const useLSMStore = create<LSMStore>((set, get) => ({
     const { tree } = get();
     const allEvents: LSMEvent[] = [];
     for (let i = 0; i < count; i++) {
-      const key = SAMPLE_KEYS[Math.floor(Math.random() * SAMPLE_KEYS.length)];
+      const key = randomKey();
       allEvents.push(...tree.put(key, randomValue()));
     }
     set({
