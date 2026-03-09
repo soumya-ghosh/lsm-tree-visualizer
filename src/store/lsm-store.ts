@@ -50,7 +50,7 @@ const KEY_PREFIXES = ['user', 'order', 'product', 'session', 'config', 'log', 'c
 
 function randomKey(): string {
   const prefix = KEY_PREFIXES[Math.floor(Math.random() * KEY_PREFIXES.length)];
-  const id = Math.floor(Math.random() * 1_000_000) + 1;
+  const id = Math.floor(Math.random() * 1_000) + 1;
   return `${id}:${prefix}`;
 }
 
