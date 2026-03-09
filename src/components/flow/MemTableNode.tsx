@@ -52,7 +52,7 @@ export function MemTableNode({ data }: NodeProps) {
         />
       </div>
 
-      <ScrollArea className="max-h-[120px] nowheel">
+      <ScrollArea className="h-[160px] nowheel">
         <div className="space-y-0.5">
           {entries.length === 0 && (
             <div className="text-[10px] text-muted-foreground italic text-center py-2">Empty</div>

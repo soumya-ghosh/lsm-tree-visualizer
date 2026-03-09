@@ -9,7 +9,8 @@ export interface WALNodeData {
 }
 
 export function WALNode({ data }: NodeProps) {
-  const { entries } = data as unknown as WALNodeData;
+  const { entries: allEntries } = data as unknown as WALNodeData;
+  const entries = allEntries.slice(-100);
 
   return (
     <motion.div
@@ -21,7 +22,9 @@ export function WALNode({ data }: NodeProps) {
       <div className="flex items-center justify-between mb-2 shrink-0">
         <div>
           <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">WAL</span>
-          <span className="text-[10px] text-muted-foreground ml-2">{entries.length} entries</span>
+          <span className="text-[10px] text-muted-foreground ml-2">
+            {allEntries.length > 100 ? `${allEntries.length} (showing last 100)` : `${allEntries.length} entries`}
+          </span>
         </div>
       </div>
 
