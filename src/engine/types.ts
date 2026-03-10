@@ -4,6 +4,7 @@ export interface LSMConfig {
   maxLevels: number;
   l0CompactionTrigger: number;
   compactionStrategy: 'leveled' | 'size-tiered';
+  baseChunkSize: number;
 }
 
 export const DEFAULT_CONFIG: LSMConfig = {
@@ -12,6 +13,7 @@ export const DEFAULT_CONFIG: LSMConfig = {
   maxLevels: 5,
   l0CompactionTrigger: 4,
   compactionStrategy: 'leveled',
+  baseChunkSize: 8,
 };
 
 export interface KeyValue {

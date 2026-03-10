@@ -14,14 +14,14 @@ export function leveledCompaction(
 ): CompactionResult | null {
   // L0 -> L1 compaction: triggered when L0 has too many SSTables
   if (levels[0] && levels[0].length >= config.l0CompactionTrigger) {
-    return compactL0ToL1(levels);
+    return compactL0ToL1(levels, config);
   }
 
   // Ln -> Ln+1: triggered when level size exceeds threshold
   for (let i = 1; i < levels.length && i < config.maxLevels - 1; i++) {
     const maxSize = Math.pow(config.levelMultiplier, i);
     if (levels[i] && levels[i].length > maxSize) {
-      return compactLevelToNext(levels, i);
+      return compactLevelToNext(levels, i, config);
     }
   }
 
@@ -35,7 +35,7 @@ function hasDeeper(levels: SSTableMeta[][], fromLevel: number): boolean {
   return false;
 }
 
-function compactL0ToL1(levels: SSTableMeta[][]): CompactionResult {
+function compactL0ToL1(levels: SSTableMeta[][], config: LSMConfig): CompactionResult {
   const l0 = levels[0] ?? [];
   const l1 = levels[1] ?? [];
 
@@ -48,7 +48,8 @@ function compactL0ToL1(levels: SSTableMeta[][]): CompactionResult {
   const dropTombstones = nonOverlappingL1.length === 0 && !hasDeeper(levels, 1);
   const merged = mergeEntries(toMerge, dropTombstones);
 
-  const chunkSize = 4;
+  // target level = 1, so chunkSize = baseChunkSize * 2^1
+  const chunkSize = config.baseChunkSize * Math.pow(2, 1);
   const newSSTs: SSTableMeta[] = [];
   for (let i = 0; i < merged.length; i += chunkSize) {
     newSSTs.push(createSSTable(1, merged.slice(i, i + chunkSize)));
@@ -65,6 +66,7 @@ function compactL0ToL1(levels: SSTableMeta[][]): CompactionResult {
 function compactLevelToNext(
   levels: SSTableMeta[][],
   level: number,
+  config: LSMConfig,
 ): CompactionResult {
   const current = levels[level] ?? [];
   const next = levels[level + 1] ?? [];
@@ -79,7 +81,8 @@ function compactLevelToNext(
   const dropTombstones = nonOverlappingNext.length === 0 && !hasDeeper(levels, level + 1);
   const merged = mergeEntries(toMerge, dropTombstones);
 
-  const chunkSize = 4;
+  // target level = level + 1, so chunkSize = baseChunkSize * 2^(level+1)
+  const chunkSize = config.baseChunkSize * Math.pow(2, level + 1);
   const newSSTs: SSTableMeta[] = [];
   for (let i = 0; i < merged.length; i += chunkSize) {
     newSSTs.push(createSSTable(level + 1, merged.slice(i, i + chunkSize)));

@@ -65,6 +65,31 @@ export function ConfigPanel() {
         </div>
 
         <div className="space-y-1.5">
+          <Label className="text-[11px]">
+            Base SSTable Size: <span className="text-primary font-mono">{config.baseChunkSize}</span>
+          </Label>
+          <Slider
+            value={[config.baseChunkSize]}
+            onValueChange={([v]) => updateConfig({ baseChunkSize: v })}
+            min={2}
+            max={32}
+            step={1}
+          />
+          <div className="text-[10px] text-muted-foreground font-mono leading-relaxed">
+            {Array.from({ length: Math.min(config.maxLevels, 5) }, (_, i) => {
+              const size = i === 0
+                ? config.memtableMaxSize
+                : config.baseChunkSize * Math.pow(2, i);
+              return (
+                <span key={i} className="mr-2">
+                  L{i}:{size}
+                </span>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="space-y-1.5">
           <Label className="text-[11px]">Compaction Strategy</Label>
           <Select
             value={config.compactionStrategy}
