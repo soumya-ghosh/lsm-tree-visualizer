@@ -136,7 +136,7 @@ export function Visualizer() {
       <OperationsPanel />
       <StatsPanel />
 
-      <div className="absolute top-4 right-4 z-50">
+      <div className="absolute top-4 right-44 z-50">
         <Button
           size="sm"
           variant="destructive"
